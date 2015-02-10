@@ -1,72 +1,75 @@
-<!DOCTYPE HTML> 
-<html>
-<head>
-<style>
-.error {color: #FF0000;}
-</style>
-</head>
-<body> 
-
 <?php
-
 // define variables
+ 	$gamestate = "";
+       $command = $_POST["Command"];
+       $gameid = $_POST["GameID"];
+       $stateid = $_POST["StateID"];
+// I think the model should be stored in a separate file like this
+//  include_once("model/Model.php");
+//  but I wasn't sure if this was what you wanted so I included the code 
+//  in this page
 
+//  shouldn't the controller be in a separate file as well and just include it??
 
-$gamestate = ""; // this value will be result of parsing the user command
-$command = $_POST["Command"];
-$gameid = $_POST["GameID"];
-$stateid = $_POST["StateID"];
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-     $command = test_input($_POST["Command"]);
-     // check if command only contains letters, numbers  and whitespace
-     if (!preg_match("/^[a-zA-Z ]*$/",$command)) {
-       $command = "Only letters, numbers and white space allowed"; 
-     }
-     else
-     {
-	// process the command entered by the user
-        // parse the command to get the user action
-        
-        //   display the result in the gamestate
-      }
-
-}
-// catch any hacker input
-function test_input($data) {
-   $data = trim($data);
-   $data = stripslashes($data);
-   $data = htmlspecialchars($data);
-   return $data;
-}
-
-
-?>
-
-<h2>Main Game Page</h2>
+// define the controller
+class Controller {
+     public $model;
  
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
-   Game State: <input type="text" readonly name="gamestate" value="<?php echo $gamestate; ?>" />
-   <input type="hidden" name="gameid" value="<?php echo $gameID; ?>" />
- <br><br>
-   <input type="hidden" name="stateid" value="<?php echo $stateID; ?>" />
-<br><br>
+     public function __construct()  
+     {  
+          $this->model = new Model();
+     } 
+ 
+     public function invoke()
+     {
+// call the getcommandresult() function of model class and store the
+// return value of this function into the reslt variable.
 
-   Command: <input type="text" name="command" value="<?php echo $command;?>" />
-   
-   <br><br>
-   
+       $gamestate = $this->model->getcommandresult($command,$gameid,$stateid);
+// display the view
+ 
+     }
+ }
+// define the model
 
-   <input type="submit" name="submit" value="Submit"> 
-</form>
+class Model {
 
-<?php
-echo "<h2>Result of the command</h2>";
-echo "user command was parsed and action was completed";
+ 	public function getcommandresult($comm, $game, $state)
+ 	{
+  // code goes here to take the command entered and determine the result
+		return "game state returned from database";
+  	}
+ }
 
-
+// now define the view
 ?>
 
-</body>
+<html>
+    <head></head>
+
+    <body>
+      <?php echo $gamestate; ?>
+      <h2>Main Game Page</h2>
+      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
+      <p>
+         <input type="hidden" name="gameid" value="<?php echo $gameID; ?>" />
+         <br><br>
+         <input type="hidden" name="stateid" value="<?php echo $stateID; ?>" />
+         <br><br>
+         Command: <input type="text" name="command" value="<?php echo $command;?>" />
+      </p>
+
+      <p>
+         <input type="submit" value="Enter" name="submit" </button> 
+      </p>
+      </form>
+
+   </body>
 </html>
+
+
+
+
+
+
+
